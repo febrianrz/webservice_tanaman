@@ -31,20 +31,25 @@ class Api extends CI_Controller {
 		$this->validation();
 		
 		$nama_tanaman	= $this->input->post('nama_tanaman',true);
-		$rowTanaman		= $this->db->select("*")
-							->join('source_web','source_web.id=master_tanaman.id_source')
-							->like('nama_tanaman',$nama_tanaman)
-							->get('master_tanaman')
-							->result();
+		$penggalan		= explode(" ",$nama_tanaman);
 		$dataExist		= [];
-		foreach($rowTanaman as $row){
-			$dt = [
-				'nama_tanaman'	=> $row->nama_tanaman,
-				'source'		=> $row->domain,
-			];
-			array_push($dataExist, $dt);
+		foreach($penggalan as $word){
+			$rowTanaman		= $this->db->select("*")
+				->join('source_web','source_web.id=master_tanaman.id_source')
+				->like('nama_tanaman',$word)
+				->get('master_tanaman')
+				->result();
+			
+			foreach($rowTanaman as $row){
+				$dt = [
+					'nama_tanaman'	=> $row->nama_tanaman,
+					'source'		=> $row->domain,
+				];
+				array_push($dataExist, $dt);
+			}
 		}
-		if($rowTanaman){
+		
+		if($dataExist){
 			echo json_encode(['status'=>true,'msg'=>'Telah tersedia','code'=>200,'data'=>$dataExist]);
 			exit();
 		} else {
