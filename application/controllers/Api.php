@@ -71,4 +71,24 @@ class Api extends CI_Controller {
 			exit();
 		}
 	}
+
+	public function search(){
+		$judul	= $this->input->post('judul_penelitian',true);
+		$cari   = $this->db->select("*, famili as nama_famili")
+				->join('source_web','source_web.id=master_tanaman.id_source')
+				->like('judul_penelitian',$judul)
+				->get('master_tanaman')
+				->result();
+		echo json_encode(['status'=>true,'msg'=>'','code'=>200, 'data'=>$cari]);
+	}
+
+	public function detail(){
+		$id	= $this->input->post('id',true);
+		$cari   = $this->db->select("*, famili as nama_famili")
+				->join('source_web','source_web.id=master_tanaman.id_source')
+				->where('master_tanaman.id',$id)
+				->get('master_tanaman')
+				->row();
+		echo json_encode(['status'=>true,'msg'=>'','code'=>200, 'data'=>$cari]);	
+	}
 }
